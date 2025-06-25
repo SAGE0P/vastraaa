@@ -56,7 +56,7 @@ const NewArr = () => {
     fetchNewArrivals();
   }, []);
   return (
-    <section className="py-12 px-6">
+    <section className="py-8 px-4 sm:py-12 sm:px-6">
       <h2 className="text-2xl font-bold mb-6">New Arrivals</h2>
       
       {/* Loading State */}
@@ -75,27 +75,27 @@ const NewArr = () => {
       
       {/* Products Grid */}
       {!loading && !error && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 md:gap-6">
           {newArrivals.map((product) => (
             <Link
               key={product._id}
               to={`/products/${product._id}`}
-              className="border rounded-md p-4 hover:shadow-md transition relative"
+              className="border rounded-md p-2 sm:p-4 hover:shadow-md transition relative"
             >
               {product.isBestSeller && (
                 <img
                   src="https://i.imgur.com/XVXPpHV.png"
                   alt="Best Seller"
-                  className="absolute top-2 left-2 w-12 h-12 z-10"
+                  className="absolute top-2 left-2 w-8 sm:w-12 h-8 sm:h-12 z-10"
                 />
               )}
               <img
                 src={product.images && product.images[0] ? product.images[0].url : 'https://picsum.photos/300/300'}
                 alt={product.name}
-                className="rounded mb-2 w-full h-auto"
+                className="rounded mb-2 w-full h-auto aspect-square object-cover"
               />
-              <h4 className="font-semibold">{product.name}</h4>
-              <p className="text-green-600">₹{product.price}</p>
+              <h4 className="font-semibold text-sm sm:text-base truncate">{product.name}</h4>
+              <p className="text-green-600 text-sm sm:text-base">₹{product.price}</p>
             </Link>
           ))}
         </div>
