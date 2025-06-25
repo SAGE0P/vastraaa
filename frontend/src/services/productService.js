@@ -7,6 +7,31 @@ const getAuthHeader = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
+// Axios instance with default config
+const axiosInstance = axios.create({
+  timeout: 10000, // 10 seconds timeout
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Add response interceptor
+axiosInstance.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response) {
+      // Server responded with error status
+      throw new Error(error.response.data.message || 'Server error occurred');
+    } else if (error.request) {
+      // Request made but no response
+      throw new Error('No response from server. Please check your internet connection.');
+    } else {
+      // Request setup error
+      throw new Error('Failed to make request. Please try again.');
+    }
+  }
+);
+
 // Product service functions
 export const productService = {
   // Get all products with optional filters
@@ -22,7 +47,10 @@ export const productService = {
       const queryString = queryParams.toString();
       const url = queryString ? `${api.products.getAll}?${queryString}` : api.products.getAll;
       
-      const response = await axios.get(url);
+      const response = await axiosInstance.get(url);
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('Invalid response format from server');
+      }
       return response.data;
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -33,7 +61,10 @@ export const productService = {
   // Get a single product by ID
   getProductById: async (id) => {
     try {
-      const response = await axios.get(api.products.getById(id));
+      const response = await axiosInstance.get(api.products.getById(id));
+      if (!response.data) {
+        throw new Error('Product not found');
+      }
       return response.data;
     } catch (error) {
       console.error(`Error fetching product ${id}:`, error);
@@ -44,7 +75,10 @@ export const productService = {
   // Get best selling products
   getBestSellers: async () => {
     try {
-      const response = await axios.get(api.products.getBestSellers);
+      const response = await axiosInstance.get(api.products.getBestSellers);
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('Invalid response format from server');
+      }
       return response.data;
     } catch (error) {
       console.error('Error fetching best sellers:', error);
@@ -55,7 +89,10 @@ export const productService = {
   // Get new arrivals
   getNewArrivals: async () => {
     try {
-      const response = await axios.get(api.products.getNewArrivals);
+      const response = await axiosInstance.get(api.products.getNewArrivals);
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('Invalid response format from server');
+      }
       return response.data;
     } catch (error) {
       console.error('Error fetching new arrivals:', error);

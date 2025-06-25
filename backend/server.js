@@ -9,9 +9,14 @@ const CartRoutes = require("./routes/CartRoutes");
 
 const app = express();
 
-// ✅ must come BEFORE routes
+// Configure CORS
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://vastraaa.vercel.app'],
+  credentials: true
+}));
+
+// Parse JSON bodies
 app.use(express.json());
-app.use(cors());
 dotenv.config();
 
 // Connect to MongoDB
